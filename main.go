@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/KEA-ACCELER/arecord-server/pkg/elastic"
@@ -94,6 +95,7 @@ func main() {
 				Path:    string(message.Message),
 				Diff:    diff,
 				Time:    time.Now(),
+				Editor:  strings.Split(conn.RemoteAddr().String(), ":")[0],
 			}
 
 			u, err := uuid.NewRandom()
@@ -171,7 +173,7 @@ func main() {
 			Path:    fileInfo.Path,
 			Diff:    diff,
 			Time:    time.Now(),
-			Editor:  conn.RemoteAddr().String(),
+			Editor:  strings.Split(conn.RemoteAddr().String(), ":")[0],
 		}
 
 		u, err := uuid.NewRandom()
