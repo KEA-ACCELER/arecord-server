@@ -77,7 +77,7 @@ func main() {
 				log.Panicln(err)
 			}
 
-			diff := utils.Diff(
+			diff, insert, delete := utils.Diff(
 				filepath.Join(dataDir, string(message.Message)+"."+strconv.Itoa(timestamp-1)),
 				filepath.Join(dataDir, string(message.Message)+"."+strconv.Itoa(timestamp)),
 			)
@@ -90,12 +90,16 @@ func main() {
 
 			// create record and send to elastic search
 			record := &record.Record{
-				Hash:    hashString,
-				Version: timestamp,
-				Path:    string(message.Message),
-				Diff:    diff,
-				Time:    time.Now(),
-				Editor:  strings.Split(conn.RemoteAddr().String(), ":")[0],
+				Hash:      hashString,
+				Version:   timestamp,
+				Path:      string(message.Message),
+				Diff:      diff,
+				Time:      time.Now(),
+				Editor:    strings.Split(conn.RemoteAddr().String(), ":")[0],
+				Size:      0,
+				Insert:    insert,
+				Delete:    delete,
+				Extension: filepath.Ext(string(message.Message)),
 			}
 
 			u, err := uuid.NewRandom()
@@ -155,7 +159,7 @@ func main() {
 			log.Panicln(err)
 		}
 
-		diff := utils.Diff(
+		diff, insert, delete := utils.Diff(
 			filepath.Join(dataDir, fileInfo.Path+"."+strconv.Itoa(timestamp-1)),
 			filepath.Join(dataDir, fileInfo.Path+"."+strconv.Itoa(timestamp)),
 		)
@@ -168,12 +172,16 @@ func main() {
 
 		// create record and send to elastic search
 		record := &record.Record{
-			Hash:    hashString,
-			Version: timestamp,
-			Path:    fileInfo.Path,
-			Diff:    diff,
-			Time:    time.Now(),
-			Editor:  strings.Split(conn.RemoteAddr().String(), ":")[0],
+			Hash:      hashString,
+			Version:   timestamp,
+			Path:      fileInfo.Path,
+			Diff:      diff,
+			Time:      time.Now(),
+			Editor:    strings.Split(conn.RemoteAddr().String(), ":")[0],
+			Size:      uint64(len(fileBuf)),
+			Insert:    insert,
+			Delete:    delete,
+			Extension: filepath.Ext(fileInfo.Path),
 		}
 
 		u, err := uuid.NewRandom()

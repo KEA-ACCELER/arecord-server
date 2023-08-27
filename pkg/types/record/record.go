@@ -6,12 +6,16 @@ import (
 )
 
 type Record struct {
-	Hash    string    `json:"hash"`
-	Version int       `json:"version"`
-	Path    string    `json:"path"`
-	Diff    string    `json:"diff"`
-	Time    time.Time `json:"time"`
-	Editor  string    `json:"editor"`
+	Hash      string    `json:"hash"`
+	Version   int       `json:"version"`
+	Path      string    `json:"path"`
+	Diff      string    `json:"diff"`
+	Time      time.Time `json:"time"`
+	Editor    string    `json:"editor"`
+	Size      uint64    `json:"size"`
+	Insert    uint64    `json:"insert"`
+	Delete    uint64    `json:"delete"`
+	Extension string    `json:"extension"`
 }
 
 func NewFromJson(j []byte) *Record {

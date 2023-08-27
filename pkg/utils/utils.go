@@ -19,7 +19,7 @@ func GetDirPath() string {
 	return filepath.Join(tempDir, "data")
 }
 
-func Diff(filea string, fileb string) string {
+func Diff(filea string, fileb string) (string, uint64, uint64) {
 
 	// a.txt와 b.txt 파일을 엽니다.
 	a, err := os.Open(filea)
@@ -53,5 +53,21 @@ func Diff(filea string, fileb string) string {
 
 	// result.txt 파일을 생성하고, 변경사항을 씁니다.
 	log.Println("diff : ", diff)
-	return diff
+
+	getSlice := strings.Split(diff, "\n")
+	insertSum := 0
+	deleteSum := 0
+	for i := 0; i < len(getSlice)-1; i++ {
+		if getSlice[i][:1] == "+" {
+			insertSum++
+		}
+		if getSlice[i][:1] == "-" {
+			deleteSum++
+		}
+	}
+	return diff, uint64(insertSum), uint64(deleteSum)
+}
+
+func GetSize(filepath string) {
+
 }
