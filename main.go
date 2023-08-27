@@ -58,6 +58,17 @@ func main() {
 		log.Println(message.Type, string(message.Message))
 		switch message.Type {
 		case "removed":
+			info, err := os.Stat(filepath.Join(dataDir, string(message.Message)+".log"))
+			if err != nil {
+				if os.IsNotExist(err) {
+					log.Println("file not exist")
+					break
+				}
+				log.Panicln(err)
+			}
+			if info.IsDir() {
+				break
+			}
 			// dotlog 파일ㅇ르 읽어서 timestamp를 가져온다.
 			dotlog, err := os.ReadFile(filepath.Join(dataDir, string(message.Message)+".log"))
 			if err != nil {
@@ -72,7 +83,7 @@ func main() {
 			if err != nil {
 				log.Panicln(err)
 			}
-			err = os.WriteFile(filepath.Join(dataDir, string(message.Message)+"."+strconv.Itoa(timestamp)), nil, 0755)
+			err = os.WriteFile(filepath.Join(dataDir, string(message.Message)+"."+strconv.Itoa(timestamp)), []byte{}, 0755)
 			if err != nil {
 				log.Panicln(err)
 			}
@@ -84,7 +95,7 @@ func main() {
 
 			// get hash
 			hasher := sha256.New()
-			hasher.Write(nil)
+			hasher.Write([]byte{})
 			hash := hasher.Sum(nil)
 			hashString := hex.EncodeToString(hash)
 
